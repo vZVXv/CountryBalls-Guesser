@@ -117,7 +117,6 @@
             transition: border-radius 0.2s ease, width 0.3s ease, height 0.3s ease;
         }
 
-        /* Режим прямоугольных флагов с подстраивающимися пропорциями */
         body.square-flags-mode .cb-ball-main {
             width: 100% !important;
             max-width: 480px !important;
@@ -243,8 +242,22 @@
                     </div>
                 </div>
 
+                <!-- Выбор режима игры -->
                 <div class="space-y-2">
-                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Сложность:</label>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Режим игры:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="setGameMode('world')" id="mode-world" class="diff-btn py-2.5 px-2 bg-sky-600 text-xs font-bold text-white transition text-center">
+                            🌍 Весь Мир<br><span class="text-[10px] text-sky-200 font-normal">Все страны</span>
+                        </button>
+                        <button onclick="setGameMode('russia')" id="mode-russia" class="diff-btn py-2.5 px-2 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition text-center">
+                            🇷🇺 Россия<br><span class="text-[10px] text-emerald-400 font-normal">Флаги регионов РФ</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Сложность (активна только для режима Весь Мир) -->
+                <div class="space-y-2" id="difficulty-section">
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Сложность (Мир):</label>
                     <div class="grid grid-cols-3 gap-2">
                         <button onclick="setDifficulty('easy')" id="diff-easy" class="diff-btn py-2.5 px-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition text-center">
                             Легкий<br><span class="text-[10px] text-sky-400 font-normal">Тир 1 (16)</span>
@@ -256,14 +269,6 @@
                             Сложный<br><span class="text-[10px] text-amber-400 font-normal">Тир 1–3 (198)</span>
                         </button>
                     </div>
-                </div>
-
-                <!-- Настройка включения прямоугольных флагов -->
-                <div class="bg-slate-800/60 p-3 rounded-2xl border border-slate-700/80 flex items-center justify-between">
-                    <label for="square-flags-toggle" class="text-xs font-semibold text-slate-300 cursor-pointer flex items-center gap-2">
-                        <i class="fas fa-flag text-sky-400"></i> Прямоугольные флаги вместо шаров
-                    </label>
-                    <input type="checkbox" id="square-flags-toggle" onchange="toggleSquareFlags(this.checked)" class="w-4 h-4 accent-sky-500 rounded cursor-pointer">
                 </div>
 
                 <div id="loading-container" class="w-full">
@@ -287,6 +292,10 @@
 
                     <button onclick="openGallery()" class="menu-btn w-full py-3 bg-slate-800/90 hover:bg-slate-700/80 text-slate-200 font-bold rounded-2xl border border-slate-700 transition text-sm flex items-center justify-start px-6 gap-3">
                         <i class="fas fa-book-atlas text-sky-400 w-5"></i> <span>Коллекция</span>
+                    </button>
+
+                    <button onclick="openSettings()" class="menu-btn w-full py-3 bg-slate-800/90 hover:bg-slate-700/80 text-slate-200 font-bold rounded-2xl border border-slate-700 transition text-sm flex items-center justify-start px-6 gap-3">
+                        <i class="fas fa-cog text-indigo-400 w-5"></i> <span>Настройки</span>
                     </button>
 
                     <button onclick="openRules()" class="menu-btn w-full py-3 bg-slate-800/90 hover:bg-slate-700/80 text-slate-200 font-bold rounded-2xl border border-slate-700 transition text-sm flex items-center justify-start px-6 gap-3">
@@ -313,6 +322,34 @@
         </div>
     </div>
 
+    <!-- Модальное окно: Настройки -->
+    <div id="settings-screen" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden flex-col items-center justify-center z-50 p-6">
+        <div class="bg-slate-900 sketch-panel p-8 max-w-md w-full flex flex-col pop">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-white">Настройки</h2>
+                    <p class="text-xs text-slate-400 mt-1">Параметры отображения игры</p>
+                </div>
+                <button onclick="closeSettings()" class="text-slate-400 hover:text-white text-lg font-bold px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-xl transition">✕</button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 flex items-center justify-between">
+                    <label for="square-flags-toggle" class="text-xs font-semibold text-slate-300 cursor-pointer flex items-center gap-2.5">
+                        <i class="fas fa-flag text-sky-400 text-base"></i> Прямоугольные флаги вместо шаров
+                    </label>
+                    <input type="checkbox" id="square-flags-toggle" onchange="toggleSquareFlags(this.checked)" class="w-5 h-5 accent-sky-500 rounded cursor-pointer">
+                </div>
+            </div>
+
+            <div class="pt-6 mt-4 border-t border-slate-800">
+                <button onclick="closeSettings()" class="w-full py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-2xl transition text-sm">
+                    Готово
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Модальное окно: Правила игры и начисления очков -->
     <div id="rules-screen" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden flex-col items-center justify-center z-50 p-6">
         <div class="bg-slate-900 sketch-panel p-8 max-w-xl w-full max-h-[90vh] flex flex-col pop">
@@ -328,7 +365,7 @@
                 <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 space-y-2">
                     <h3 class="font-bold text-sky-400 flex items-center gap-2"><i class="fas fa-gamepad"></i> Цель игры</h3>
                     <p class="text-xs leading-relaxed text-slate-300">
-                        Вам показывается раскрашенный в цвета флага персонаж-Countryball. Ваша задача — правильно угадать название страны из 5 предложенных вариантов.
+                        Вам показывается раскрашенный в цвета флага персонаж-Countryball (или региональный шар). Ваша задача — правильно угадать название из 5 предложенных вариантов.
                     </p>
                 </div>
 
@@ -343,11 +380,10 @@
                 </div>
 
                 <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 space-y-2">
-                    <h3 class="font-bold text-indigo-400 flex items-center gap-2"><i class="fas fa-layer-group"></i> Уровни сложности</h3>
+                    <h3 class="font-bold text-indigo-400 flex items-center gap-2"><i class="fas fa-layer-group"></i> Режимы игры</h3>
                     <ul class="text-xs space-y-1.5 text-slate-300 list-disc pl-4">
-                        <li><strong>Легкий:</strong> только самые известные страны (Тир 1, 16 стран).</li>
-                        <li><strong>Средний:</strong> Тир 1 и Тир 2 (63 страны).</li>
-                        <li><strong>Сложный:</strong> все доступные страны мира (Тир 1–3, 198 стран).</li>
+                        <li><strong>Весь Мир:</strong> все страны мира (с выбором сложности по тирам).</li>
+                        <li><strong>Россия:</strong> флаги и гербы субъектов и регионов Российской Федерации.</li>
                     </ul>
                 </div>
 
@@ -373,7 +409,7 @@
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h2 class="text-2xl font-extrabold text-white">Рекорды</h2>
-                    <p class="text-xs text-slate-400 mt-1">Лучшие очки по сложностям</p>
+                    <p class="text-xs text-slate-400 mt-1">Лучшие очки по режимам</p>
                 </div>
                 <button onclick="closeLeaderboard()" class="text-slate-400 hover:text-white text-lg font-bold px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-xl transition">✕</button>
             </div>
@@ -381,26 +417,34 @@
             <div class="space-y-4">
                 <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 flex justify-between items-center">
                     <div>
-                        <div class="text-sm font-bold text-sky-400">Легкий (Тир 1)</div>
-                        <div class="text-xs text-slate-400">Всего стран: 16</div>
+                        <div class="text-sm font-bold text-sky-400">Мир: Легкий</div>
+                        <div class="text-xs text-slate-400">Тир 1 (16 стран)</div>
                     </div>
-                    <div id="best-easy" class="text-2xl font-black text-emerald-400">0</div>
+                    <div id="best-world-easy" class="text-2xl font-black text-emerald-400">0</div>
                 </div>
 
                 <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 flex justify-between items-center">
                     <div>
-                        <div class="text-sm font-bold text-indigo-400">Средний (Тир 1–2)</div>
-                        <div class="text-xs text-slate-400">Всего стран: 63</div>
+                        <div class="text-sm font-bold text-indigo-400">Мир: Средний</div>
+                        <div class="text-xs text-slate-400">Тир 1–2 (63 страны)</div>
                     </div>
-                    <div id="best-medium" class="text-2xl font-black text-emerald-400">0</div>
+                    <div id="best-world-medium" class="text-2xl font-black text-emerald-400">0</div>
                 </div>
 
                 <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 flex justify-between items-center">
                     <div>
-                        <div class="text-sm font-bold text-amber-400">Сложный (Тир 1–3)</div>
-                        <div class="text-xs text-slate-400">Всего стран: 198</div>
+                        <div class="text-sm font-bold text-amber-400">Мир: Сложный</div>
+                        <div class="text-xs text-slate-400">Тир 1–3 (198 стран)</div>
                     </div>
-                    <div id="best-hard" class="text-2xl font-black text-emerald-400">0</div>
+                    <div id="best-world-hard" class="text-2xl font-black text-emerald-400">0</div>
+                </div>
+
+                <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 flex justify-between items-center">
+                    <div>
+                        <div class="text-sm font-bold text-emerald-400">Регионы России</div>
+                        <div class="text-xs text-slate-400">Субъекты РФ</div>
+                    </div>
+                    <div id="best-russia" class="text-2xl font-black text-emerald-400">0</div>
                 </div>
             </div>
         </div>
@@ -412,23 +456,28 @@
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h2 class="text-2xl font-extrabold text-white">Коллекция Countryballs</h2>
-                    <p class="text-xs text-slate-400 mt-1">Открывайте страны, угадывая их в игре</p>
+                    <p class="text-xs text-slate-400 mt-1" id="gallery-subtitle">Открывайте страны и регионы в игре</p>
                 </div>
-                <button onclick="closeGallery()" class="text-slate-400 hover:text-white text-lg font-bold px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-xl transition">✕</button>
+                <div class="flex items-center gap-3">
+                    <div class="flex bg-slate-800 p-1 rounded-xl border border-slate-700">
+                        <button onclick="switchGalleryTab('world')" id="gallery-tab-world" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-sky-600 text-white transition">Мир</button>
+                        <button onclick="switchGalleryTab('russia')" id="gallery-tab-russia" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition">Россия</button>
+                    </div>
+                    <button onclick="closeGallery()" class="text-slate-400 hover:text-white text-lg font-bold px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-xl transition">✕</button>
+                </div>
             </div>
             
             <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 overflow-y-auto pr-2 flex-grow custom-scroll"></div>
         </div>
     </div>
 
-    <!-- Модальное окно просмотра увеличенного прямоугольного флага -->
+    <!-- Модальное окно просмотра увеличенного флага -->
     <div id="flag-modal" onclick="closeFlagModal()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4 cursor-pointer">
         <div class="bg-slate-900 sketch-panel p-6 max-w-3xl w-full flex flex-col items-center pop cursor-default" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center w-full mb-4">
                 <h3 id="modal-flag-title" class="text-lg font-extrabold text-white">Оригинальный флаг</h3>
                 <button onclick="closeFlagModal()" class="text-slate-400 hover:text-white text-lg font-bold px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-xl transition">✕</button>
             </div>
-            <!-- Динамический рамка-контейнер без жесткой высоты h-[60vh] -->
             <div id="modal-flag-container" class="w-full bg-slate-950 rounded-xl overflow-hidden border-2 border-slate-800 flex items-center justify-center relative shadow-inner" style="max-height: 70vh;">
                 <div id="modal-flag-img" class="w-full h-full bg-cover bg-center bg-no-repeat transition-all duration-200"></div>
             </div>
@@ -441,7 +490,7 @@
         <div class="flex items-center space-x-3">
             <span class="text-3xl">🌍</span>
             <h1 class="text-2xl font-black tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-indigo-400 comic-font">
-                CountryBalls Guesser v0.7.4 (BETA)
+                CountryBalls Guesser v0.8.2 (BETA)
             </h1>
         </div>
 
@@ -487,7 +536,7 @@
                 Kurwa! Кто я? (Нажми на меня для подсказки)
             </div>
 
-            <div id="countryball-container" onclick="openCurrentFlagModal()" class="cb-ball-main flex items-center justify-center pop" title="Нажмите, чтобы посмотреть прямоугольный флаг">
+            <div id="countryball-container" onclick="openCurrentFlagModal()" class="cb-ball-main flex items-center justify-center pop" title="Нажмите, чтобы посмотреть флаг">
                 <div id="ball-flag" class="ball-flag-bg"></div>
                 <div id="ball-eyes" class="absolute inset-0 flex items-center justify-center gap-2 pointer-events-none z-10 pt-1"></div>
                 <div id="flag-loader" class="text-slate-400 animate-pulse font-semibold text-xs z-30">Загрузка...</div>
@@ -496,9 +545,9 @@
 
         <div class="col-span-5 flex flex-col justify-center space-y-4">
             <div class="flex justify-between items-center mb-1">
-                <h2 class="text-slate-400 text-sm font-semibold uppercase tracking-wider">Угадайте Countryball:</h2>
+                <h2 class="text-slate-400 text-sm font-semibold uppercase tracking-wider">Угадайте вариант:</h2>
                 <span id="current-diff-tag" class="text-xs font-extrabold px-2.5 py-1 bg-slate-800 border border-slate-700 rounded-lg text-sky-400">
-                    Средний (Тир 1–2)
+                    Весь Мир
                 </span>
             </div>
             <div id="options-container" class="flex flex-col space-y-3"></div>
@@ -513,8 +562,8 @@
 
             <div class="bg-slate-800/50 rounded-2xl p-4 mb-6 space-y-3 border border-slate-700/50">
                 <div class="flex justify-between items-center text-sm">
-                    <span class="text-slate-400">Сложность:</span>
-                    <span id="final-diff" class="font-bold text-slate-200">Средний</span>
+                    <span class="text-slate-400">Режим:</span>
+                    <span id="final-diff" class="font-bold text-slate-200">Мир</span>
                 </div>
                 <div class="flex justify-between items-center text-sm">
                     <span class="text-slate-400">Счет:</span>
@@ -543,11 +592,31 @@
 
     <footer class="w-full max-w-6xl mx-auto p-4 flex justify-between items-center text-slate-500 text-xs">
         <span>CountryBalls Guesser</span>
-        <span class="font-mono text-slate-400">v0.7.4 (BETA)</span>
+        <span class="font-mono text-slate-400">v0.8.2 (BETA)</span>
     </footer>
 
     <script>
-        const countries = [
+        // Глобальный кэш загруженных изображений для предотвращения повторных скачиваний
+        const loadedImagesCache = {};
+
+        function getCachedImage(url, callback) {
+            if (loadedImagesCache[url]) {
+                callback(loadedImagesCache[url]);
+                return;
+            }
+            const img = new Image();
+            img.src = url;
+            img.onload = () => {
+                loadedImagesCache[url] = img;
+                callback(img);
+            };
+            img.onerror = () => {
+                callback(img);
+            };
+        }
+
+        // База стран мира (прямые ссылки на raw.githubusercontent.com)
+        const worldCountries = [
             { code: 'ar', name: 'Аргентина', tier: 1 },
             { code: 'au', name: 'Австралия', tier: 1 },
             { code: 'br', name: 'Бразилия', tier: 1 },
@@ -747,28 +816,88 @@
             { code: 'ye', name: 'Йемен', tier: 3 },
             { code: 'zm', name: 'Замбия', tier: 3 },
             { code: 'zw', name: 'Зимбабве', tier: 3 }
-        ].map(c => ({ name: c.name, code: c.code, tier: c.tier || 1 }));
+        ].map(c => ({ 
+            name: c.name, 
+            code: c.code, 
+            tier: c.tier || 1, 
+            url: `https://raw.githubusercontent.com/vZVXv/CountryBalls-Guesser/main/FLAGS/WORLD/${c.code}.png` 
+        }));
+
+        // База регионов России (прямые ссылки на raw.githubusercontent.com)
+        const russiaRegions = [
+            { name: "Москва", code: "moscow" },
+            { name: "Санкт-Петербург", code: "spb" },
+            { name: "Московская область", code: "moscow_oblast" },
+            { name: "Краснодарский край", code: "krasnodar" },
+            { name: "Свердловская область", code: "sverdlovsk" },
+            { name: "Республика Татарстан", code: "tatarstan" },
+            { name: "Республика Башкортостан", code: "bashkortostan" },
+            { name: "Красноярский край", code: "krasnoyarsk" },
+            { name: "Ростовская область", code: "rostov" },
+            { name: "Нижегородская область", code: "nizhny_novgorod" },
+            { name: "Самарская область", code: "samara" },
+            { name: "Челябинская область", code: "chelyabinsk" },
+            { name: "Республика Крым", code: "crimea" },
+            { name: "Приморский край", code: "primorsky" },
+            { name: "Новосибирская область", code: "novosibirsk" },
+            { name: "Кемеровская область", code: "kemerovo" },
+            { name: "Иркутская область", code: "irkutsk" },
+            { name: "Хабаровский край", code: "khabarovsk" },
+            { name: "Ставропольский край", code: "stavropol" },
+            { name: "Воронежская область", code: "voronezh" },
+            { name: "Волгоградская область", code: "volgograd" },
+            { name: "Саратовская область", code: "saratov" },
+            { name: "Белгородская область", code: "belgorod" },
+            { name: "Владимирская область", code: "vladimir" },
+            { name: "Калининградская область", code: "kaliningrad" },
+            { name: "Ярославская область", code: "yaroslavl" },
+            { name: "Мурманская область", code: "murmansk" },
+            { name: "Архангельская область", code: "arkhangelsk" },
+            { name: "Республика Саха (Якутия)", code: "yakutia" },
+            { name: "Чеченская Республика", code: "chechnya" },
+            { name: "Республика Дагестан", code: "dagestan" },
+            { name: "Республика Карелия", code: "karelia" },
+            { name: "Республика Коми", code: "komi" },
+            { name: "Удмуртская Республика", code: "udmurtia" },
+            { name: "Чувашская Республика", code: "chuvashia" },
+            { name: "Алтайский край", code: "altai" },
+            { name: "Пермский край", code: "perm" },
+            { name: "Забайкальский край", code: "zabaykalsky" },
+            { name: "Омская область", code: "omsk" },
+            { name: "Томская область", code: "tomsk" }
+        ].map((r, idx) => ({ 
+            id: 'ru_' + idx, 
+            name: r.name, 
+            code: r.code,
+            url: `https://raw.githubusercontent.com/vZVXv/CountryBalls-Guesser/main/FLAGS/RU/${r.code}.png` 
+        }));
 
         let score = 0;
         let combo = 0;
         let maxCombo = 0;
         let lives = 5;
+        let currentGameMode = 'world'; 
         let selectedDifficulty = 'medium';
         let sessionUniqueGuessed = new Set();
         let countryUsage = {};
+        
         let flagStats = JSON.parse(localStorage.getItem('cb_unified_stats') || '{}');
+        let russiaStats = JSON.parse(localStorage.getItem('cb_russia_stats') || '{}');
         let unseenUnlocks = JSON.parse(localStorage.getItem('cb_unseen_unlocks') || '{}');
-        let bestScores = JSON.parse(localStorage.getItem('cb_unified_bests') || '{"easy":0,"medium":0,"hard":0}');
+        let bestScores = JSON.parse(localStorage.getItem('cb_unified_bests') || '{"easy":0,"medium":0,"hard":0,"russia":0}');
         let showSquareFlags = JSON.parse(localStorage.getItem('cb_show_square_flags') || 'false');
+        
         let currentCountry = null;
         let isAnswered = false;
         let menuBallInterval = null;
         let insultInterval = null;
+        let activeGalleryTab = 'world';
 
         const difficultyLabels = {
-            easy: 'Легкий (Тир 1)',
-            medium: 'Средний (Тир 1–2)',
-            hard: 'Сложный (Тир 1–3)'
+            easy: 'Мир: Легкий (Тир 1)',
+            medium: 'Мир: Средний (Тир 1–2)',
+            hard: 'Мир: Сложный (Тир 1–3)',
+            russia: 'Регионы России'
         };
 
         const countryballInsults = [
@@ -786,22 +915,7 @@
             "Италия перепутала правильный ответ с рецептом пиццы (и сожгла оба).",
             "Япония готовит меха-робота, чтобы нажать за тебя нужную кнопку.",
             "Швейцария сохраняет нейтралитет, пока твой счет катится на дно.",
-            "Бразилия отправляет тебя в путешествие в свои фавелы за такую игру.",
-            "Финляндия ушла пить водку в сауну, лишь бы не видеть твой счет.",
-            "Греция просит у тебя кредит на покупку правильных ответов.",
-            "Египет замуровал твою логику в самую глубокую пирамиду.",
-            "Индия звонит тебе из техподдержки, но даже она не может это исправить.",
-            "Исландия извергла вулкан, чтобы скрыть твой позор.",
-            "Беларусь предлагает тебе картофелину вместо подсказки.",
-            "Турция торгуется за правильный ответ, но твоя валюта здесь не в ходу.",
-            "Монако настолько маленькое, что в нем поместится только твой IQ.",
-            "Ватикан молится за спасение твоих игровых жизней.",
-            "Казахстан слишком велик для твоих мелких неудач.",
-            "Нидерланды слишком расслабились, чтобы заметить твой провал.",
-            "Аргентина уверяет, что этот ответ — золото, но это лишь инфляция.",
-            "КНДР запускает ракету в сторону твоего игрового счета.",
-            "Швеция пытается собрать твой мозг по инструкции из ИКЕА.",
-            "Катар пытается купить правильный ответ, но игра не продается."
+            "Бразилия отправляет тебя в путешествие в свои фавелы за такую игру."
         ];
 
         const speechPhrases = [
@@ -853,7 +967,7 @@
             "Ой-ёй...",
             "Абсолютно секретно!",
             "Ну привет!",
-            "Хе-хе, попробуй найди!"
+            "Хе-хе, попробуй найди!"											 
         ];
 
         const menuPhrases = [
@@ -891,7 +1005,7 @@
             "Монголия хочет возродить империю. Начнем с меню?",
             "Австралия боится эму, но не боится играть.",
             "Новая Зеландия устала, что её забывают на картах.",
-            "Египет охраняет тайны этого меню."
+            "Египет охраняет тайны этого меню."															   
         ];
 
         const scoreEl = document.getElementById('score');
@@ -907,6 +1021,7 @@
         const galleryScreen = document.getElementById('gallery-screen');
         const leaderboardScreen = document.getElementById('leaderboard-screen');
         const rulesScreen = document.getElementById('rules-screen');
+        const settingsScreen = document.getElementById('settings-screen');
         const flagModal = document.getElementById('flag-modal');
         const modalFlagImg = document.getElementById('modal-flag-img');
         const modalFlagTitle = document.getElementById('modal-flag-title');
@@ -962,14 +1077,15 @@
             }
 
             if (currentCountry) {
-                if (currentCountry.code === 'pl' && !showSquareFlags) {
+                if (currentCountry.code === 'pl' && !showSquareFlags && currentGameMode === 'world') {
                     ballFlag.style.transform = 'rotate(180deg)';
                 } else {
                     ballFlag.style.transform = 'rotate(0deg)';
                 }
-                const currentImg = new Image();
-                currentImg.src = `https://flagcdn.com/w640/${currentCountry.code}.png`;
-                currentImg.onload = () => updateContainerAspectRatio(cbContainer, currentImg);
+                const flagUrl = currentCountry.url;
+                getCachedImage(flagUrl, (currentImg) => {
+                    updateContainerAspectRatio(cbContainer, currentImg);
+                });
             } else {
                 cbContainer.style.aspectRatio = showSquareFlags ? '' : '1 / 1';
             }
@@ -1004,17 +1120,18 @@
             const menuBubble = document.getElementById('menu-speech-bubble');
             const menuContainer = document.getElementById('menu-countryball-container');
 
-            const randomCountry = countries[Math.floor(Math.random() * countries.length)];
+            const randomCountry = worldCountries[Math.floor(Math.random() * worldCountries.length)];
             
             menuContainer.classList.remove('pop');
             void menuContainer.offsetWidth;
             menuContainer.classList.add('pop');
 
-            menuFlag.style.backgroundImage = `url('https://flagcdn.com/w640/${randomCountry.code}.png')`;
+            const flagUrl = randomCountry.url;
+            menuFlag.style.backgroundImage = `url('${flagUrl}')`;
             
-            const menuImg = new Image();
-            menuImg.src = `https://flagcdn.com/w640/${randomCountry.code}.png`;
-            menuImg.onload = () => updateContainerAspectRatio(menuContainer, menuImg);
+            getCachedImage(flagUrl, (menuImg) => {
+                updateContainerAspectRatio(menuContainer, menuImg);
+            });
 
             if (randomCountry.code === 'pl' && !showSquareFlags) {
                 menuFlag.style.transform = 'rotate(180deg)';
@@ -1022,15 +1139,7 @@
                 menuFlag.style.transform = 'rotate(0deg)';
             }
 
-            const mood = Math.random();
-            if (mood < 0.6) {
-                menuEyes.innerHTML = svgEyesNormal;
-            } else if (mood < 0.8) {
-                menuEyes.innerHTML = svgEyesWin;
-            } else {
-                menuEyes.innerHTML = svgEyesAngry;
-            }
-
+            menuEyes.innerHTML = svgEyesNormal;
             menuName.textContent = randomCountry.name;
             menuBubble.textContent = menuPhrases[Math.floor(Math.random() * menuPhrases.length)];
         }
@@ -1053,8 +1162,25 @@
         function init() {
             squareFlagsToggle.checked = showSquareFlags;
             toggleSquareFlags(showSquareFlags);
-            preloadFlags();
+            preloadResources();
             startMenuBallAnimation();
+        }
+
+        function setGameMode(mode) {
+            currentGameMode = mode;
+            const btnWorld = document.getElementById('mode-world');
+            const btnRussia = document.getElementById('mode-russia');
+            const diffSection = document.getElementById('difficulty-section');
+
+            if (mode === 'world') {
+                btnWorld.className = 'diff-btn py-2.5 px-2 bg-sky-600 text-xs font-bold text-white transition text-center';
+                btnRussia.className = 'diff-btn py-2.5 px-2 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition text-center';
+                diffSection.style.display = 'block';
+            } else {
+                btnRussia.className = 'diff-btn py-2.5 px-2 bg-emerald-600 text-xs font-bold text-white transition text-center';
+                btnWorld.className = 'diff-btn py-2.5 px-2 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition text-center';
+                diffSection.style.display = 'none';
+            }
         }
 
         function setDifficulty(diff) {
@@ -1069,35 +1195,36 @@
             });
         }
 
-        function preloadFlags() {
+        function preloadResources() {
             let loaded = 0;
-            const total = countries.length;
+            const allItems = [...worldCountries, ...russiaRegions];
+            const total = allItems.length;
             const loadingBar = document.getElementById('loading-bar');
             const loadingPercent = document.getElementById('loading-percent');
             const loadingText = document.getElementById('loading-text');
             const startBtn = document.getElementById('start-btn');
             const loadingContainer = document.getElementById('loading-container');
 
-            countries.forEach(country => {
-                const img = new Image();
-                img.src = `https://flagcdn.com/w640/${country.code}.png`;
-                img.onload = img.onerror = () => {
+            allItems.forEach(item => {
+                getCachedImage(item.url, () => {
                     loaded++;
                     const percent = Math.floor((loaded / total) * 100);
-                    loadingBar.style.width = percent + '%';
-                    loadingPercent.textContent = percent + '%';
+                    if (loadingBar) loadingBar.style.width = percent + '%';
+                    if (loadingPercent) loadingPercent.textContent = percent + '%';
 
-                    if (loaded === total) {
-                        loadingText.textContent = 'Готово!';
-                        loadingContainer.classList.add('opacity-0', 'transition-opacity', 'duration-500');
-                        setTimeout(() => loadingContainer.style.display = 'none', 500);
+                    if (loaded === total && startBtn) {
+                        if (loadingText) loadingText.textContent = 'Готово!';
+                        if (loadingContainer) {
+                            loadingContainer.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                            setTimeout(() => loadingContainer.style.display = 'none', 500);
+                        }
                         
                         startBtn.disabled = false;
                         startBtn.classList.remove('bg-slate-800', 'text-slate-500', 'cursor-not-allowed', 'border-slate-700');
                         startBtn.classList.add('bg-gradient-to-r', 'from-sky-500', 'to-indigo-600', 'hover:from-sky-400', 'hover:to-indigo-500', 'text-white', 'shadow-lg', 'hover:shadow-sky-500/25', 'border-transparent');
                         startBtn.innerHTML = `<i class="fas fa-play text-sm"></i> <span>Начать игру</span>`;
                     }
-                };
+                });
             });
         }
 
@@ -1116,10 +1243,21 @@
             startMenuBallAnimation();
         }
 
+        function openSettings() {
+            settingsScreen.classList.remove('hidden');
+            settingsScreen.classList.add('flex');
+        }
+
+        function closeSettings() {
+            settingsScreen.classList.add('hidden');
+            settingsScreen.classList.remove('flex');
+        }
+
         function openLeaderboard() {
-            document.getElementById('best-easy').textContent = bestScores.easy || 0;
-            document.getElementById('best-medium').textContent = bestScores.medium || 0;
-            document.getElementById('best-hard').textContent = bestScores.hard || 0;
+            document.getElementById('best-world-easy').textContent = bestScores.easy || 0;
+            document.getElementById('best-world-medium').textContent = bestScores.medium || 0;
+            document.getElementById('best-world-hard').textContent = bestScores.hard || 0;
+            document.getElementById('best-russia').textContent = bestScores.russia || 0;
             leaderboardScreen.classList.remove('hidden');
             leaderboardScreen.classList.add('flex');
         }
@@ -1129,56 +1267,73 @@
             leaderboardScreen.classList.remove('flex');
         }
 
-        function markUnlockSeen(code, cardElement) {
-            delete unseenUnlocks[code];
+        function switchGalleryTab(tab) {
+            activeGalleryTab = tab;
+            const btnWorld = document.getElementById('gallery-tab-world');
+            const btnRussia = document.getElementById('gallery-tab-russia');
+            if (tab === 'world') {
+                btnWorld.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-sky-600 text-white transition';
+                btnRussia.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition';
+            } else {
+                btnRussia.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white transition';
+                btnWorld.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition';
+            }
+            renderGalleryGrid();
+        }
+
+        function markUnlockSeen(key, cardElement) {
+            delete unseenUnlocks[key];
             localStorage.setItem('cb_unseen_unlocks', JSON.stringify(unseenUnlocks));
             cardElement.classList.remove('new-unlocked-glow');
             cardElement.onclick = null;
         }
 
         function openGallery() {
+            switchGalleryTab('world');
+            galleryScreen.classList.add('flex');
+            galleryScreen.classList.remove('hidden');
+        }
+
+        function renderGalleryGrid() {
             const grid = document.getElementById('gallery-grid');
             grid.innerHTML = '';
             
+            const dataset = activeGalleryTab === 'world' ? worldCountries : russiaRegions;
+            const stats = activeGalleryTab === 'world' ? flagStats : russiaStats;
+            
             let unlockedCount = 0;
-            countries.forEach(c => {
-                const count = flagStats[c.code] || 0;
+            dataset.forEach(item => {
+                const key = item.code || item.id;
+                const count = stats[key] || 0;
                 const isUnlocked = count > 0;
                 if (isUnlocked) unlockedCount++;
 
                 const card = document.createElement('div');
-                const isUnseen = isUnlocked && (unseenUnlocks[c.code] === true);
+                const isUnseen = isUnlocked && (unseenUnlocks[key] === true);
                 
                 card.className = `sketch-box p-4 flex flex-col items-center justify-between aspect-square text-center ${isUnlocked ? 'bg-emerald-950/40' : 'bg-slate-900/60 opacity-75'} ${isUnseen ? 'new-unlocked-glow cursor-pointer' : 'bg-slate-800/90'}`;
                 
                 if (isUnseen) {
-                    card.onclick = () => markUnlockSeen(c.code, card);
+                    card.onclick = () => markUnlockSeen(key, card);
                 }
 
+                const flagUrl = item.url;
+
                 if (isUnlocked) {
-                    const rotation = (c.code === 'pl' && !showSquareFlags) ? 'transform: rotate(180deg);' : '';
+                    const rotation = (item.code === 'pl' && !showSquareFlags && activeGalleryTab === 'world') ? 'transform: rotate(180deg);' : '';
                     card.innerHTML = `
-                        <div class="cb-ball-gallery gallery-item-${c.code} flex items-center justify-center my-auto">
-                            <div class="ball-flag-bg" style="background-image: url('https://flagcdn.com/w160/${c.code}.png'); ${rotation}"></div>
+                        <div class="cb-ball-gallery flex items-center justify-center my-auto">
+                            <div class="ball-flag-bg" style="background-image: url('${flagUrl}'); ${rotation}"></div>
                             <div class="absolute inset-0 flex items-center justify-center gap-1 z-10 pt-0.5">
                                 <div class="cb-eye-mini"></div>
                                 <div class="cb-eye-mini"></div>
                             </div>
                         </div>
                         <div class="w-full mt-2">
-                            <div class="text-sm font-bold text-slate-200 truncate leading-tight">${c.name}</div>
+                            <div class="text-sm font-bold text-slate-200 truncate leading-tight">${item.name}</div>
                             <div class="text-[11px] text-slate-400 mt-0.5">Угадан: <span class="text-emerald-400 font-bold">${count}</span></div>
                         </div>
                     `;
-                    
-                    if (showSquareFlags) {
-                        const tempImg = new Image();
-                        tempImg.src = `https://flagcdn.com/w160/${c.code}.png`;
-                        tempImg.onload = () => {
-                            const galleryEl = card.querySelector('.cb-ball-gallery');
-                            if (galleryEl) updateContainerAspectRatio(galleryEl, tempImg);
-                        };
-                    }
                 } else {
                     card.innerHTML = `
                         <div class="cb-ball-gallery flex items-center justify-center my-auto bg-slate-800/80 border-2 border-slate-700">
@@ -1193,13 +1348,10 @@
                 grid.appendChild(card);
             });
 
-            const subtitle = galleryScreen.querySelector('p.text-xs');
+            const subtitle = document.getElementById('gallery-subtitle');
             if (subtitle) {
-                subtitle.textContent = `Открыто: ${unlockedCount} из ${countries.length}`;
+                subtitle.textContent = `Открыто: ${unlockedCount} из ${dataset.length}`;
             }
-
-            galleryScreen.classList.add('flex');
-            galleryScreen.classList.remove('hidden');
         }
 
         function closeGallery() {
@@ -1221,19 +1373,17 @@
             if (!currentCountry) return;
             modalFlagTitle.textContent = `Оригинальный флаг`;
             
-            const rotation = (currentCountry.code === 'pl' && !showSquareFlags) ? 'transform: rotate(180deg);' : '';
-            modalFlagImg.style.backgroundImage = `url('https://flagcdn.com/w640/${currentCountry.code}.png')`;
+            const flagUrl = currentCountry.url;
+            const rotation = (currentCountry.code === 'pl' && !showSquareFlags && currentGameMode === 'world') ? 'transform: rotate(180deg);' : '';
+            modalFlagImg.style.backgroundImage = `url('${flagUrl}')`;
             modalFlagImg.style.transform = rotation;
 
-            // Динамически подстраиваем пропорции рамки в модалке под конкретный флаг
             modalFlagContainer.style.aspectRatio = '3 / 2';
 
-            const img = new Image();
-            img.src = `https://flagcdn.com/w640/${currentCountry.code}.png`;
-            img.onload = () => {
+            getCachedImage(flagUrl, (img) => {
                 const ratio = img.naturalWidth / img.naturalHeight;
                 modalFlagContainer.style.aspectRatio = ratio ? `${ratio}` : '3 / 2';
-            };
+            });
 
             flagModal.classList.remove('hidden');
             flagModal.classList.add('flex');
@@ -1251,24 +1401,31 @@
             lives = 5;
             sessionUniqueGuessed.clear();
             countryUsage = {};
-            currentDiffTag.textContent = difficultyLabels[selectedDifficulty];
+
+            if (currentGameMode === 'world') {
+                currentDiffTag.textContent = difficultyLabels[selectedDifficulty];
+            } else {
+                currentDiffTag.textContent = difficultyLabels['russia'];
+            }
+
             updateStats();
             gameOverScreen.classList.add('hidden');
             gameOverScreen.classList.remove('flex');
             nextQuestion();
         }
 
-        function getFilteredCountries() {
+        function getActiveDataset() {
+            if (currentGameMode === 'russia') return russiaRegions;
             let maxTier = 1;
             if (selectedDifficulty === 'easy') maxTier = 1;
             else if (selectedDifficulty === 'medium') maxTier = 2;
             else if (selectedDifficulty === 'hard') maxTier = 3;
-            return countries.filter(c => c.tier <= maxTier);
+            return worldCountries.filter(c => c.tier <= maxTier);
         }
 
         function updateStats() {
             scoreEl.textContent = score;
-            const filteredTotal = getFilteredCountries().length;
+            const filteredTotal = getActiveDataset().length;
             
             if (correctCountEl) {
                 correctCountEl.textContent = `${sessionUniqueGuessed.size} / ${filteredTotal}`;
@@ -1276,12 +1433,13 @@
             
             comboEl.textContent = combo + 'x';
 
-            const currentBest = bestScores[selectedDifficulty] || 0;
+            const scoreKey = currentGameMode === 'russia' ? 'russia' : selectedDifficulty;
+            const currentBest = bestScores[scoreKey] || 0;
             if (score > currentBest) {
-                bestScores[selectedDifficulty] = score;
+                bestScores[scoreKey] = score;
                 localStorage.setItem('cb_unified_bests', JSON.stringify(bestScores));
             }
-            bestScoreEl.textContent = bestScores[selectedDifficulty] || 0;
+            bestScoreEl.textContent = bestScores[scoreKey] || 0;
             
             let heartsHtml = '';
             for (let i = 0; i < 5; i++) {
@@ -1294,54 +1452,52 @@
             livesContainer.innerHTML = heartsHtml;
         }
 
-        function getAvailableCountries() {
-            const filtered = getFilteredCountries();
-            let available = filtered.filter(c => (countryUsage[c.code] || 0) < 3);
-            if (available.length === 0) available = filtered;
+        function getAvailableItems() {
+            const dataset = getActiveDataset();
+            let available = dataset.filter(c => (countryUsage[c.code || c.id] || 0) < 3);
+            if (available.length === 0) available = dataset;
             return available;
         }
 
         function nextQuestion() {
             isAnswered = false;
             cbContainer.classList.remove('shake');
-            
             setNormalEyes();
 
-            const available = getAvailableCountries();
-
-            let validCandidates = available.filter(c => !currentCountry || c.code !== currentCountry.code);
+            const available = getAvailableItems();
+            let validCandidates = available.filter(c => !currentCountry || (c.code || c.id) !== (currentCountry.code || currentCountry.id));
 
             if (validCandidates.length === 0) {
                 validCandidates = available;
             }
 
             currentCountry = validCandidates[Math.floor(Math.random() * validCandidates.length)];
-            countryUsage[currentCountry.code] = (countryUsage[currentCountry.code] || 0) + 1;
+            const currentKey = currentCountry.code || currentCountry.id;
+            countryUsage[currentKey] = (countryUsage[currentKey] || 0) + 1;
 
             flagLoader.classList.remove('hidden');
             ballFlag.style.backgroundImage = 'none';
 
-            if (currentCountry.code === 'pl' && !showSquareFlags) {
+            if (currentCountry.code === 'pl' && !showSquareFlags && currentGameMode === 'world') {
                 ballFlag.style.transform = 'rotate(180deg)';
             } else {
                 ballFlag.style.transform = 'rotate(0deg)';
             }
 
-            const img = new Image();
-            img.src = `https://flagcdn.com/w640/${currentCountry.code}.png`;
-            img.onload = () => {
+            const flagUrl = currentCountry.url;
+            getCachedImage(flagUrl, (img) => {
                 flagLoader.classList.add('hidden');
-                ballFlag.style.backgroundImage = `url('${img.src}')`;
+                ballFlag.style.backgroundImage = `url('${flagUrl}')`;
                 updateContainerAspectRatio(cbContainer, img);
-            };
+            });
 
             speechBubble.textContent = speechPhrases[Math.floor(Math.random() * speechPhrases.length)];
 
-            const filteredPool = getFilteredCountries();
+            const datasetPool = getActiveDataset();
             const options = [currentCountry];
-            while (options.length < 5) {
-                const randomOption = filteredPool[Math.floor(Math.random() * filteredPool.length)];
-                if (!options.some(opt => opt.code === randomOption.code)) {
+            while (options.length < 5 && options.length < datasetPool.length) {
+                const randomOption = datasetPool[Math.floor(Math.random() * datasetPool.length)];
+                if (!options.some(opt => (opt.code || opt.id) === (randomOption.code || randomOption.id))) {
                     options.push(randomOption);
                 }
             }
@@ -1371,19 +1527,31 @@
             const allButtons = optionsContainer.querySelectorAll('button');
             allButtons.forEach(b => b.disabled = true);
 
-            if (selectedOption.code === currentCountry.code) {
+            const selectedKey = selectedOption.code || selectedOption.id;
+            const currentKey = currentCountry.code || currentCountry.id;
+
+            if (selectedKey === currentKey) {
                 score += 10 + combo * 2;
                 combo++;
-                sessionUniqueGuessed.add(currentCountry.code);
+                sessionUniqueGuessed.add(currentKey);
 
-                const previousCount = flagStats[currentCountry.code] || 0;
-                if (previousCount === 0) {
-                    unseenUnlocks[currentCountry.code] = true;
-                    localStorage.setItem('cb_unseen_unlocks', JSON.stringify(unseenUnlocks));
+                if (currentGameMode === 'world') {
+                    const prevCount = flagStats[currentKey] || 0;
+                    if (prevCount === 0) {
+                        unseenUnlocks[currentKey] = true;
+                        localStorage.setItem('cb_unseen_unlocks', JSON.stringify(unseenUnlocks));
+                    }
+                    flagStats[currentKey] = prevCount + 1;
+                    localStorage.setItem('cb_unified_stats', JSON.stringify(flagStats));
+                } else {
+                    const prevCount = russiaStats[currentKey] || 0;
+                    if (prevCount === 0) {
+                        unseenUnlocks[currentKey] = true;
+                        localStorage.setItem('cb_unseen_unlocks', JSON.stringify(unseenUnlocks));
+                    }
+                    russiaStats[currentKey] = prevCount + 1;
+                    localStorage.setItem('cb_russia_stats', JSON.stringify(russiaStats));
                 }
-
-                flagStats[currentCountry.code] = previousCount + 1;
-                localStorage.setItem('cb_unified_stats', JSON.stringify(flagStats));
 
                 if (combo > maxCombo) maxCombo = combo;
                 
@@ -1391,7 +1559,7 @@
                 btn.classList.add('bg-emerald-600', 'border-emerald-400', 'text-white', 'pop');
                 btn.querySelector('.status-icon').innerHTML = '✓';
 
-                const winPhrases = [
+const winPhrases = [
                     "Yay! Yuo can into geography!",
                     "Правильно! Так держать!",
                     "Отлично!",
@@ -1399,7 +1567,7 @@
                     "Точно в цель! География покорена!"
                 ];
                 speechBubble.textContent = winPhrases[Math.floor(Math.random() * winPhrases.length)];
-                
+          
                 setWinSvgEyes();
 
                 updateStats();
@@ -1412,7 +1580,7 @@
                 btn.classList.add('bg-rose-600', 'border-rose-400', 'text-white', 'shake');
                 btn.querySelector('.status-icon').innerHTML = '✕';
 
-                const wrongPhrases = [
+ const wrongPhrases = [
                     "Kurwa! Ne pravilno!",
                     "О нет, ошибка!",
                     "Не угадал, попробуй еще раз!",
@@ -1420,7 +1588,6 @@
                     "Ошибка! Ты потерял жизнь!"
                 ];
                 speechBubble.textContent = wrongPhrases[Math.floor(Math.random() * wrongPhrases.length)];
-
                 cbContainer.classList.add('shake');
                 setAngrySvgEyes();
 
@@ -1442,9 +1609,9 @@
         }
 
         function showGameOver() {
-            document.getElementById('final-diff').textContent = difficultyLabels[selectedDifficulty];
+            document.getElementById('final-diff').textContent = currentGameMode === 'russia' ? 'Регионы России' : difficultyLabels[selectedDifficulty];
             document.getElementById('final-score').textContent = score;
-            const filteredTotal = getFilteredCountries().length;
+            const filteredTotal = getActiveDataset().length;
             document.getElementById('final-correct').textContent = `${sessionUniqueGuessed.size} / ${filteredTotal}`;
             document.getElementById('final-combo').textContent = maxCombo + 'x';
             
@@ -1453,7 +1620,7 @@
         }
 
         window.addEventListener('keydown', (e) => {
-            if (isAnswered || lives <= 0 || !startScreen.classList.contains('hidden') || !galleryScreen.classList.contains('hidden') || !leaderboardScreen.classList.contains('hidden') || !rulesScreen.classList.contains('hidden')) return;
+            if (isAnswered || lives <= 0 || !startScreen.classList.contains('hidden') || !galleryScreen.classList.contains('hidden') || !leaderboardScreen.classList.contains('hidden') || !rulesScreen.classList.contains('hidden') || !settingsScreen.classList.contains('hidden')) return;
             const key = parseInt(e.key, 10);
             if (key >= 1 && key <= 5) {
                 const buttons = optionsContainer.querySelectorAll('button');
