@@ -122,6 +122,7 @@
             width: 100% !important;
             max-width: 480px !important;
             height: auto !important;
+            align-self: center !important;
             border-radius: 16px !important;
             transform: none !important;
             box-shadow: 6px 8px 0px #0f172a !important;
@@ -131,6 +132,7 @@
             width: 100% !important;
             max-width: 400px !important;
             height: auto !important;
+            align-self: center !important;
             border-radius: 16px !important;
             transform: none !important;
             box-shadow: 6px 8px 0px #0f172a !important;
@@ -176,8 +178,8 @@
         }
 
         body.square-flags-mode .ball-flag-bg {
-            position: relative;
-            inset: auto;
+            position: absolute;
+            inset: 0;
             width: 100%;
             height: 100%;
             background-size: cover;
@@ -419,15 +421,16 @@
         </div>
     </div>
 
-    <!-- Модальное окно просмотра увеличенного прямоугольного флага (Увеличено в 2 раза) -->
+    <!-- Модальное окно просмотра увеличенного прямоугольного флага -->
     <div id="flag-modal" onclick="closeFlagModal()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4 cursor-pointer">
-        <div class="bg-slate-900 sketch-panel p-6 max-w-4xl w-full flex flex-col items-center pop cursor-default" onclick="event.stopPropagation()">
+        <div class="bg-slate-900 sketch-panel p-6 max-w-3xl w-full flex flex-col items-center pop cursor-default" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center w-full mb-4">
                 <h3 id="modal-flag-title" class="text-lg font-extrabold text-white">Оригинальный флаг</h3>
                 <button onclick="closeFlagModal()" class="text-slate-400 hover:text-white text-lg font-bold px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-xl transition">✕</button>
             </div>
-            <div class="w-full h-[60vh] max-h-[600px] bg-slate-950 rounded-xl overflow-hidden border-2 border-slate-800 flex items-center justify-center relative">
-                <div id="modal-flag-img" class="absolute inset-0 bg-contain bg-center bg-no-repeat"></div>
+            <!-- Динамический рамка-контейнер без жесткой высоты h-[60vh] -->
+            <div id="modal-flag-container" class="w-full bg-slate-950 rounded-xl overflow-hidden border-2 border-slate-800 flex items-center justify-center relative shadow-inner" style="max-height: 70vh;">
+                <div id="modal-flag-img" class="w-full h-full bg-cover bg-center bg-no-repeat transition-all duration-200"></div>
             </div>
             <p class="text-xs text-slate-400 mt-3 text-center">Нажмите в любое место, чтобы закрыть</p>
         </div>
@@ -438,7 +441,7 @@
         <div class="flex items-center space-x-3">
             <span class="text-3xl">🌍</span>
             <h1 class="text-2xl font-black tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-indigo-400 comic-font">
-                CountryBalls Guesser v0.7.3 (BETA)
+                CountryBalls Guesser v0.7.4 (BETA)
             </h1>
         </div>
 
@@ -540,7 +543,7 @@
 
     <footer class="w-full max-w-6xl mx-auto p-4 flex justify-between items-center text-slate-500 text-xs">
         <span>CountryBalls Guesser</span>
-        <span class="font-mono text-slate-400">v0.7.3 (BETA)</span>
+        <span class="font-mono text-slate-400">v0.7.4 (BETA)</span>
     </footer>
 
     <script>
@@ -907,6 +910,7 @@
         const flagModal = document.getElementById('flag-modal');
         const modalFlagImg = document.getElementById('modal-flag-img');
         const modalFlagTitle = document.getElementById('modal-flag-title');
+        const modalFlagContainer = document.getElementById('modal-flag-container');
         const currentDiffTag = document.getElementById('current-diff-tag');
         const speechBubble = document.getElementById('speech-bubble');
         const ballEyesContainer = document.getElementById('ball-eyes');
@@ -938,20 +942,36 @@
                 <path d="M 12.4 51.5 L 12.5 51.5 L 12.6 51.5 L 12.8 51.2 L 13.5 50.5 L 14.4 49.9 L 15.2 49.3 L 16.1 48.5 L 16.8 47.9 L 17.5 47.1 L 18.3 46.4 L 19.3 45.5 L 20.4 44.8 L 21.5 44.1 L 22.6 43.5 L 23.7 43.2 L 24.8 42.7 L 25.8 42.4 L 27.1 42.2 L 28.4 42.0 L 29.6 42.0 L 30.7 42.0 L 31.7 42.1 L 32.8 42.2 L 33.9 42.4 L 35.2 42.7 L 36.5 43.1 L 37.6 43.4 L 38.5 43.8 L 39.2 44.1 L 39.8 44.5 L 40.2 45.0 L 40.9 45.4 L 41.5 46.2 L 42.1 46.9 L 42.8 47.7 L 43.3 48.3 L 43.5 48.6 L 43.8 48.9 L 44.1 49.4 L 44.4 50.0 L 44.6 50.6 L 44.9 51.2 L 45.1 51.6 L 45.2 51.9 L 45.4 52.1 L 45.5 52.3 L 45.5 52.7 L 45.5 53.1 L 45.5 53.6 L 45.5 54.0 L 45.5 54.4 L 45.5 54.6 L 45.5 54.7 L 45.5 54.6 L 45.5 54.3 L 45.6 53.8 L 46.0 53.1 L 46.4 52.1 L 47.0 51.2 L 47.6 49.9 L 48.1 48.9 L 48.5 48.3 L 49.0 47.2 L 49.5 46.3 L 49.8 45.1 L 50.0 43.9 L 50.5 42.8 L 50.8 41.8 L 51.2 40.4 L 51.4 39.0 L 51.6 37.4 L 52.1 35.6 L 52.2 34.0 L 52.2 32.8 L 52.2 31.2 L 52.2 29.5 L 52.1 27.9 L 51.5 26.0 L 50.9 24.0 L 50.5 22.6 L 49.9 21.3 L 49.2 19.8 L 48.7 18.6 L 47.8 17.3 L 46.8 16.3 L 45.8 15.2 L 44.8 14.1 L 43.7 13.1 L 42.5 12.1 L 41.2 11.3 L 40.0 10.6 L 39.0 10.0 L 37.7 9.4 L 36.7 8.9 L 35.8 8.5 L 34.8 8.4 L 33.9 8.3 L 32.9 8.2 L 31.6 8.2 L 30.6 8.2 L 29.6 8.3 L 28.7 8.5 L 27.7 8.8 L 26.6 9.1 L 25.2 9.7 L 24.0 10.0 L 22.7 10.5 L 21.6 10.9 L 20.9 11.2 L 20.0 11.6 L 19.2 11.8 L 18.8 12.1 L 18.1 12.6 L 17.5 12.9 L 17.0 13.4 L 16.4 13.8 L 15.8 14.5 L 15.4 15.1 L 14.8 15.9 L 14.1 16.5 L 13.7 17.2 L 13.1 18.0 L 12.7 18.8 L 12.3 19.6 L 12.0 20.5 L 11.4 21.6 L 11.0 22.7 L 10.6 23.9 L 10.2 25.5 L 10.1 27.6 L 9.8 29.8 L 9.7 31.9 L 9.6 34.1 L 9.6 36.1 L 9.6 38.1 L 9.7 40.1 L 10.1 42.2 L 10.6 44.0 L 11.0 45.2 L 11.2 46.0 L 11.3 46.4 L 11.6 47.0 L 12.2 48.3 L 12.9 49.5 L 13.5 50.3 L 13.8 50.6 Z" fill="#ffffff" stroke="#0f172a" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round"></path>
             </svg>`;
 
+        function updateContainerAspectRatio(container, img) {
+            if (showSquareFlags) {
+                const ratio = img.naturalWidth / img.naturalHeight;
+                container.style.aspectRatio = ratio ? `${ratio}` : '3 / 2';
+            } else {
+                container.style.aspectRatio = '1 / 1';
+            }
+        }
+
         function toggleSquareFlags(enabled) {
             showSquareFlags = enabled;
             localStorage.setItem('cb_show_square_flags', JSON.stringify(showSquareFlags));
+            
             if (showSquareFlags) {
                 document.body.classList.add('square-flags-mode');
             } else {
                 document.body.classList.remove('square-flags-mode');
             }
+
             if (currentCountry) {
                 if (currentCountry.code === 'pl' && !showSquareFlags) {
                     ballFlag.style.transform = 'rotate(180deg)';
                 } else {
                     ballFlag.style.transform = 'rotate(0deg)';
                 }
+                const currentImg = new Image();
+                currentImg.src = `https://flagcdn.com/w640/${currentCountry.code}.png`;
+                currentImg.onload = () => updateContainerAspectRatio(cbContainer, currentImg);
+            } else {
+                cbContainer.style.aspectRatio = showSquareFlags ? '' : '1 / 1';
             }
         }
 
@@ -994,14 +1014,7 @@
             
             const menuImg = new Image();
             menuImg.src = `https://flagcdn.com/w640/${randomCountry.code}.png`;
-            menuImg.onload = () => {
-                if (showSquareFlags) {
-                    const ratio = menuImg.naturalWidth / menuImg.naturalHeight;
-                    menuContainer.style.aspectRatio = ratio;
-                } else {
-                    menuContainer.style.aspectRatio = '1 / 1';
-                }
-            };
+            menuImg.onload = () => updateContainerAspectRatio(menuContainer, menuImg);
 
             if (randomCountry.code === 'pl' && !showSquareFlags) {
                 menuFlag.style.transform = 'rotate(180deg)';
@@ -1162,9 +1175,8 @@
                         const tempImg = new Image();
                         tempImg.src = `https://flagcdn.com/w160/${c.code}.png`;
                         tempImg.onload = () => {
-                            const ratio = tempImg.naturalWidth / tempImg.naturalHeight;
                             const galleryEl = card.querySelector('.cb-ball-gallery');
-                            if (galleryEl) galleryEl.style.aspectRatio = ratio;
+                            if (galleryEl) updateContainerAspectRatio(galleryEl, tempImg);
                         };
                     }
                 } else {
@@ -1208,9 +1220,21 @@
         function openCurrentFlagModal() {
             if (!currentCountry) return;
             modalFlagTitle.textContent = `Оригинальный флаг`;
+            
             const rotation = (currentCountry.code === 'pl' && !showSquareFlags) ? 'transform: rotate(180deg);' : '';
             modalFlagImg.style.backgroundImage = `url('https://flagcdn.com/w640/${currentCountry.code}.png')`;
             modalFlagImg.style.transform = rotation;
+
+            // Динамически подстраиваем пропорции рамки в модалке под конкретный флаг
+            modalFlagContainer.style.aspectRatio = '3 / 2';
+
+            const img = new Image();
+            img.src = `https://flagcdn.com/w640/${currentCountry.code}.png`;
+            img.onload = () => {
+                const ratio = img.naturalWidth / img.naturalHeight;
+                modalFlagContainer.style.aspectRatio = ratio ? `${ratio}` : '3 / 2';
+            };
+
             flagModal.classList.remove('hidden');
             flagModal.classList.add('flex');
         }
@@ -1308,13 +1332,7 @@
             img.onload = () => {
                 flagLoader.classList.add('hidden');
                 ballFlag.style.backgroundImage = `url('${img.src}')`;
-                
-                if (showSquareFlags) {
-                    const ratio = img.naturalWidth / img.naturalHeight;
-                    cbContainer.style.aspectRatio = ratio;
-                } else {
-                    cbContainer.style.aspectRatio = '1 / 1';
-                }
+                updateContainerAspectRatio(cbContainer, img);
             };
 
             speechBubble.textContent = speechPhrases[Math.floor(Math.random() * speechPhrases.length)];
