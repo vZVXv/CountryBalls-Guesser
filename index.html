@@ -82,7 +82,7 @@
             background-color: #1e293b;
             transform: rotate(-1.5deg);
             cursor: pointer;
-            transition: transform 0.15s ease;
+            transition: transform 0.15s ease, border-radius 0.2s ease, width 0.3s ease, height 0.3s ease;
         }
 
         .cb-ball-main:active {
@@ -100,7 +100,7 @@
                 8px 10px 0px #0f172a !important;
             overflow: hidden;
             background-color: #1e293b;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, border-radius 0.2s ease, width 0.3s ease, height 0.3s ease;
             transform: rotate(1.5deg);
         }
 
@@ -114,6 +114,41 @@
             overflow: hidden;
             background-color: #1e293b;
             flex-shrink: 0;
+            transition: border-radius 0.2s ease, width 0.3s ease, height 0.3s ease;
+        }
+
+        /* Режим прямоугольных флагов с подстраивающимися пропорциями */
+        body.square-flags-mode .cb-ball-main {
+            width: 100% !important;
+            max-width: 480px !important;
+            height: auto !important;
+            border-radius: 16px !important;
+            transform: none !important;
+            box-shadow: 6px 8px 0px #0f172a !important;
+        }
+
+        body.square-flags-mode .cb-ball-menu {
+            width: 100% !important;
+            max-width: 400px !important;
+            height: auto !important;
+            border-radius: 16px !important;
+            transform: none !important;
+            box-shadow: 6px 8px 0px #0f172a !important;
+        }
+
+        body.square-flags-mode .cb-ball-gallery {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 85px !important;
+            border-radius: 10px !important;
+            transform: none !important;
+            box-shadow: 3px 4px 0px #0f172a !important;
+        }
+
+        body.square-flags-mode #ball-eyes,
+        body.square-flags-mode #menu-ball-eyes,
+        body.square-flags-mode .cb-ball-gallery .absolute {
+            display: none !important;
         }
 
         .new-unlocked-glow {
@@ -137,6 +172,15 @@
             inset: 0;
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        body.square-flags-mode .ball-flag-bg {
+            position: relative;
+            inset: auto;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
         }
 
         .cb-eye-mini {
@@ -210,6 +254,14 @@
                             Сложный<br><span class="text-[10px] text-amber-400 font-normal">Тир 1–3 (198)</span>
                         </button>
                     </div>
+                </div>
+
+                <!-- Настройка включения прямоугольных флагов -->
+                <div class="bg-slate-800/60 p-3 rounded-2xl border border-slate-700/80 flex items-center justify-between">
+                    <label for="square-flags-toggle" class="text-xs font-semibold text-slate-300 cursor-pointer flex items-center gap-2">
+                        <i class="fas fa-flag text-sky-400"></i> Прямоугольные флаги вместо шаров
+                    </label>
+                    <input type="checkbox" id="square-flags-toggle" onchange="toggleSquareFlags(this.checked)" class="w-4 h-4 accent-sky-500 rounded cursor-pointer">
                 </div>
 
                 <div id="loading-container" class="w-full">
@@ -367,14 +419,14 @@
         </div>
     </div>
 
-    <!-- Модальное окно просмотра оригинального прямоугольного флага -->
+    <!-- Модальное окно просмотра увеличенного прямоугольного флага (Увеличено в 2 раза) -->
     <div id="flag-modal" onclick="closeFlagModal()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4 cursor-pointer">
-        <div class="bg-slate-900 sketch-panel p-6 max-w-lg w-full flex flex-col items-center pop cursor-default" onclick="event.stopPropagation()">
+        <div class="bg-slate-900 sketch-panel p-6 max-w-4xl w-full flex flex-col items-center pop cursor-default" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center w-full mb-4">
                 <h3 id="modal-flag-title" class="text-lg font-extrabold text-white">Оригинальный флаг</h3>
                 <button onclick="closeFlagModal()" class="text-slate-400 hover:text-white text-lg font-bold px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-xl transition">✕</button>
             </div>
-            <div class="w-full aspect-[3/2] bg-slate-950 rounded-xl overflow-hidden border-2 border-slate-800 flex items-center justify-center relative">
+            <div class="w-full h-[60vh] max-h-[600px] bg-slate-950 rounded-xl overflow-hidden border-2 border-slate-800 flex items-center justify-center relative">
                 <div id="modal-flag-img" class="absolute inset-0 bg-contain bg-center bg-no-repeat"></div>
             </div>
             <p class="text-xs text-slate-400 mt-3 text-center">Нажмите в любое место, чтобы закрыть</p>
@@ -386,7 +438,7 @@
         <div class="flex items-center space-x-3">
             <span class="text-3xl">🌍</span>
             <h1 class="text-2xl font-black tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-indigo-400 comic-font">
-                CountryBalls Guesser v0.7.0 (BETA)
+                CountryBalls Guesser v0.7.3 (BETA)
             </h1>
         </div>
 
@@ -488,7 +540,7 @@
 
     <footer class="w-full max-w-6xl mx-auto p-4 flex justify-between items-center text-slate-500 text-xs">
         <span>CountryBalls Guesser</span>
-        <span class="font-mono text-slate-400">v0.7.0 (BETA)</span>
+        <span class="font-mono text-slate-400">v0.7.3 (BETA)</span>
     </footer>
 
     <script>
@@ -704,6 +756,7 @@
         let flagStats = JSON.parse(localStorage.getItem('cb_unified_stats') || '{}');
         let unseenUnlocks = JSON.parse(localStorage.getItem('cb_unseen_unlocks') || '{}');
         let bestScores = JSON.parse(localStorage.getItem('cb_unified_bests') || '{"easy":0,"medium":0,"hard":0}');
+        let showSquareFlags = JSON.parse(localStorage.getItem('cb_show_square_flags') || 'false');
         let currentCountry = null;
         let isAnswered = false;
         let menuBallInterval = null;
@@ -859,13 +912,14 @@
         const ballEyesContainer = document.getElementById('ball-eyes');
         const cbContainer = document.getElementById('countryball-container');
         const dynamicInsultEl = document.getElementById('dynamic-insult-phrase');
+        const squareFlagsToggle = document.getElementById('square-flags-toggle');
 
         const svgEyesNormal = `
             <svg width="105" height="105" viewBox="0 0 60 60" style="transform: rotate(-4deg); overflow: visible; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));">
                 <path d="M 29.9 8.0 L 29.9 7.9 L 30.0 7.9 L 30.1 7.9 L 30.8 7.9 L 31.9 7.9 L 33.5 8.3 L 35.2 8.9 L 36.7 9.6 L 38.3 10.5 L 40.0 11.5 L 41.3 12.2 L 42.3 13.0 L 43.4 13.6 L 44.3 14.5 L 45.1 15.2 L 45.9 16.2 L 46.7 17.3 L 47.1 18.0 L 47.7 19.0 L 48.2 20.2 L 48.7 21.4 L 49.2 22.8 L 49.9 24.4 L 50.4 25.7 L 50.7 27.3 L 51.0 28.8 L 51.1 30.2 L 51.2 31.9 L 51.2 33.5 L 51.2 34.9 L 51.2 36.5 L 51.0 38.0 L 50.6 39.5 L 50.3 41.2 L 49.8 42.9 L 49.1 44.6 L 48.5 46.3 L 47.6 47.7 L 46.9 48.8 L 46.1 49.7 L 45.2 50.6 L 44.4 51.3 L 43.4 52.0 L 42.4 52.8 L 41.5 53.3 L 40.3 53.7 L 39.2 54.0 L 38.2 54.3 L 36.8 54.6 L 35.4 54.8 L 33.8 55.1 L 32.0 55.3 L 30.2 55.5 L 28.6 55.5 L 27.0 55.6 L 25.6 55.6 L 24.2 55.6 L 22.7 55.5 L 21.5 55.3 L 20.3 54.9 L 19.0 54.6 L 17.9 53.9 L 16.8 53.3 L 15.6 52.4 L 14.6 51.6 L 13.8 50.6 L 12.9 49.4 L 12.4 47.9 L 11.6 46.3 L 10.7 44.4 L 10.0 42.9 L 9.4 41.4 L 9.0 39.8 L 8.6 38.1 L 8.3 36.3 L 8.3 34.4 L 8.3 32.9 L 8.5 31.6 L 8.9 29.9 L 9.2 28.1 L 9.8 26.3 L 10.3 24.8 L 11.0 23.2 L 11.9 21.5 L 13.1 19.7 L 14.2 18.0 L 15.2 16.8 L 16.0 15.5 L 17.0 14.6 L 17.7 13.6 L 18.7 12.6 L 19.5 11.6 L 20.3 10.7 L 21.0 10.2 L 21.5 10.0 L 22.1 9.6 L 22.7 9.3 L 23.3 9.0 L 23.7 8.9 L 24.0 8.9 L 24.5 8.9 L 25.4 8.9 L 26.5 8.9 L 27.5 9.0 L 28.1 9.0 Z" fill="#ffffff" stroke="#0f172a" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round"></path>
             </svg>
             <svg width="105" height="105" viewBox="0 0 60 60" style="transform: scaleX(-1) rotate(-4deg); overflow: visible; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));">
-                <path d="M 29.9 8.0 L 29.9 7.9 L 30.0 7.9 L 30.1 7.9 L 30.8 7.9 L 31.9 7.9 L 33.5 8.3 L 35.2 8.9 L 36.7 9.6 L 38.3 10.5 L 40.0 11.5 L 41.3 12.2 L 42.3 13.0 L 43.4 13.6 L 44.3 14.5 L 45.1 15.2 L 45.9 16.2 L 46.7 17.3 L 47.1 18.0 L 47.7 19.0 L 48.2 20.2 L 48.7 21.4 L 49.2 22.8 L 49.9 24.4 L 50.4 25.7 L 50.7 27.3 L 51.0 28.8 L 51.1 30.2 L 51.2 31.9 L 51.2 33.5 L 51.2 34.9 L 51.2 36.5 L 51.0 38.0 L 50.6 39.5 L 50.3 41.2 L 49.8 42.9 L 49.1 44.6 L 48.5 46.3 L 47.6 47.7 L 46.9 48.8 L 46.1 49.7 L 45.2 50.6 L 44.4 51.3 L 43.4 52.0 L 42.4 52.8 L 41.5 53.3 L 40.3 53.7 L 39.2 54.0 L 38.2 54.3 L 36.8 54.6 L 35.4 54.8 L 33.8 55.1 L 32.0 55.3 L 30.2 55.5 L 28.6 55.5 L 27.0 55.6 L 25.6 55.6 L 24.2 55.6 L 22.7 55.5 L 21.5 55.3 L 20.3 54.9 L 19.0 54.6 L 17.9 53.9 L 16.8 53.3 L 15.6 52.4 L 14.6 51.6 L 13.8 50.6 L 12.9 49.4 L 12.4 47.9 L 11.6 46.3 L 10.7 44.4 L 10.0 42.9 L 10.0 42.9 L 9.4 41.4 L 9.0 39.8 L 8.6 38.1 L 8.3 36.3 L 8.3 34.4 L 8.3 32.9 L 8.5 31.6 L 8.9 29.9 L 9.2 28.1 L 9.8 26.3 L 10.3 24.8 L 11.0 23.2 L 11.9 21.5 L 13.1 19.7 L 14.2 18.0 L 15.2 16.8 L 16.0 15.5 L 17.0 14.6 L 17.7 13.6 L 18.7 12.6 L 19.5 11.6 L 20.3 10.7 L 21.0 10.2 L 21.5 10.0 L 22.1 9.6 L 22.7 9.3 L 23.3 9.0 L 23.7 8.9 L 24.0 8.9 L 24.5 8.9 L 25.4 8.9 L 26.5 8.9 L 27.5 9.0 L 28.1 9.0 Z" fill="#ffffff" stroke="#0f172a" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round"></path>
+                <path d="M 29.9 8.0 L 29.9 7.9 L 30.0 7.9 L 30.1 7.9 L 30.8 7.9 L 31.9 7.9 L 33.5 8.3 L 35.2 8.9 L 36.7 9.6 L 38.3 10.5 L 40.0 11.5 L 41.3 12.2 L 42.3 13.0 L 43.4 13.6 L 44.3 14.5 L 45.1 15.2 L 45.9 16.2 L 46.7 17.3 L 47.1 18.0 L 47.7 19.0 L 48.2 20.2 L 48.7 21.4 L 49.2 22.8 L 49.9 24.4 L 50.4 25.7 L 50.7 27.3 L 51.0 28.8 L 51.1 30.2 L 51.2 31.9 L 51.2 33.5 L 51.2 34.9 L 51.2 36.5 L 51.0 38.0 L 50.6 39.5 L 50.3 41.2 L 49.8 42.9 L 49.1 44.6 L 48.5 46.3 L 47.6 47.7 L 46.9 48.8 L 46.1 49.7 L 45.2 50.6 L 44.4 51.3 L 43.4 52.0 L 42.4 52.8 L 41.5 53.3 L 40.3 53.7 L 39.2 54.0 L 38.2 54.3 L 36.8 54.6 L 35.4 54.8 L 33.8 55.1 L 32.0 55.3 L 30.2 55.5 L 28.6 55.5 L 27.0 55.6 L 25.6 55.6 L 24.2 55.6 L 22.7 55.5 L 21.5 55.3 L 20.3 54.9 L 19.0 54.6 L 17.9 53.9 L 16.8 53.3 L 15.6 52.4 L 14.6 51.6 L 13.8 50.6 L 12.9 49.4 L 12.4 47.9 L 11.6 46.3 L 10.7 44.4 L 10.0 42.9 L 10.0 42.9 L 9.4 41.4 L 9.0 39.8 L 8.6 38.1 L 8.3 36.3 L 8.3 34.4 L 8.3 32.9 L 8.5 31.6 L 8.9 29.9 L 9.2 28.1 L 9.8 26.3 L 10.3 24.8 L 11.0 23.2 L 11.9 21.5 L 13.1 19.7 L 14.2 18.0 L 15.2 16.8 L 16.0 15.5 L 17.0 14.6 L 17.7 13.6 L 18.7 12.6 L 19.5 11.6 L 20.3 10.7 L 21.0 10.2 Z" fill="#ffffff" stroke="#0f172a" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round"></path>
             </svg>`;
 
         const svgEyesAngry = `
@@ -881,8 +935,25 @@
                 <path d="M 12.4 51.5 L 12.5 51.5 L 12.6 51.5 L 12.8 51.2 L 13.5 50.5 L 14.4 49.9 L 15.2 49.3 L 16.1 48.5 L 16.8 47.9 L 17.5 47.1 L 18.3 46.4 L 19.3 45.5 L 20.4 44.8 L 21.5 44.1 L 22.6 43.5 L 23.7 43.2 L 24.8 42.7 L 25.8 42.4 L 27.1 42.2 L 28.4 42.0 L 29.6 42.0 L 30.7 42.0 L 31.7 42.1 L 32.8 42.2 L 33.9 42.4 L 35.2 42.7 L 36.5 43.1 L 37.6 43.4 L 38.5 43.8 L 39.2 44.1 L 39.8 44.5 L 40.2 45.0 L 40.9 45.4 L 41.5 46.2 L 42.1 46.9 L 42.8 47.7 L 43.3 48.3 L 43.5 48.6 L 43.8 48.9 L 44.1 49.4 L 44.4 50.0 L 44.6 50.6 L 44.9 51.2 L 45.1 51.6 L 45.2 51.9 L 45.4 52.1 L 45.5 52.3 L 45.5 52.7 L 45.5 53.1 L 45.5 53.6 L 45.5 54.0 L 45.5 54.4 L 45.5 54.6 L 45.5 54.7 L 45.5 54.6 L 45.5 54.3 L 45.6 53.8 L 46.0 53.1 L 46.4 52.1 L 47.0 51.2 L 47.6 49.9 L 48.1 48.9 L 48.5 48.3 L 49.0 47.2 L 49.5 46.3 L 49.8 45.1 L 50.0 43.9 L 50.5 42.8 L 50.8 41.8 L 51.2 40.4 L 51.4 39.0 L 51.6 37.4 L 52.1 35.6 L 52.2 34.0 L 52.2 32.8 L 52.2 31.2 L 52.2 29.5 L 52.1 27.9 L 51.5 26.0 L 50.9 24.0 L 50.5 22.6 L 49.9 21.3 L 49.2 19.8 L 48.7 18.6 L 47.8 17.3 L 46.8 16.3 L 45.8 15.2 L 44.8 14.1 L 43.7 13.1 L 42.5 12.1 L 41.2 11.3 L 40.0 10.6 L 39.0 10.0 L 37.7 9.4 L 36.7 8.9 L 35.8 8.5 L 34.8 8.4 L 33.9 8.3 L 32.9 8.2 L 31.6 8.2 L 30.6 8.2 L 29.6 8.3 L 28.7 8.5 L 27.7 8.8 L 26.6 9.1 L 25.2 9.7 L 24.0 10.0 L 22.7 10.5 L 21.6 10.9 L 20.9 11.2 L 20.0 11.6 L 19.2 11.8 L 18.8 12.1 L 18.1 12.6 L 17.5 12.9 L 17.0 13.4 L 16.4 13.8 L 15.8 14.5 L 15.4 15.1 L 14.8 15.9 L 14.1 16.5 L 13.7 17.2 L 13.1 18.0 L 12.7 18.8 L 12.3 19.6 L 12.0 20.5 L 11.4 21.6 L 11.0 22.7 L 10.6 23.9 L 10.2 25.5 L 10.1 27.6 L 9.8 29.8 L 9.7 31.9 L 9.6 34.1 L 9.6 36.1 L 9.6 38.1 L 9.7 40.1 L 10.1 42.2 L 10.6 44.0 L 11.0 45.2 L 11.2 46.0 L 11.3 46.4 L 11.6 47.0 L 12.2 48.3 L 12.9 49.5 L 13.5 50.3 L 13.8 50.6 Z" fill="#ffffff" stroke="#0f172a" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round"></path>
             </svg>
             <svg width="105" height="105" viewBox="0 0 60 60" style="transform: scaleX(-1) rotate(-4deg); overflow: visible; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));">
-                <path d="M 12.4 51.5 L 12.5 51.5 L 12.6 51.5 L 12.8 51.2 L 13.5 50.5 L 14.4 49.9 L 15.2 49.3 L 16.1 48.5 L 16.8 47.9 L 17.5 47.1 L 18.3 46.4 L 19.3 45.5 L 20.4 44.8 L 21.5 44.1 L 22.6 43.5 L 23.7 43.2 L 24.8 42.7 L 25.8 42.4 L 27.1 42.2 L 28.4 42.0 L 29.6 42.0 L 30.7 42.0 L 31.7 42.1 L 32.8 42.2 L 33.9 42.4 L 35.2 42.7 L 36.5 43.1 L 37.6 43.4 L 38.5 43.8 L 39.2 44.1 L 39.8 44.5 L 40.2 45.0 L 40.9 45.4 L 41.5 46.2 L 42.1 46.9 L 42.8 47.7 L 43.3 48.3 L 43.5 48.6 L 44.1 49.4 L 44.4 50.0 L 44.6 50.6 L 44.9 51.2 L 45.1 51.6 L 45.2 51.9 L 45.4 52.1 L 45.5 52.3 L 45.5 52.7 L 45.5 53.1 L 45.5 53.6 L 45.5 54.0 L 45.5 54.4 L 45.5 54.6 L 45.5 54.7 L 45.5 54.6 L 45.5 54.3 L 45.6 53.8 L 46.0 53.1 L 46.4 52.1 L 47.0 51.2 L 47.6 49.9 L 48.1 48.9 L 48.5 48.3 L 49.0 47.2 L 49.5 46.3 L 49.8 45.1 L 50.0 43.9 L 50.5 42.8 L 50.8 41.8 L 51.2 40.4 L 51.4 39.0 L 51.6 37.4 L 52.1 35.6 L 52.2 34.0 L 52.2 32.8 L 52.2 31.2 L 52.2 29.5 L 52.1 27.9 L 51.5 26.0 L 50.9 24.0 L 50.5 22.6 L 49.9 21.3 L 49.2 19.8 L 48.7 18.6 L 47.8 17.3 L 46.8 16.3 L 45.8 15.2 L 44.8 14.1 L 43.7 13.1 L 42.5 12.1 L 41.2 11.3 L 40.0 10.6 L 39.0 10.0 L 37.7 9.4 L 36.7 8.9 L 35.8 8.5 L 34.8 8.4 L 33.9 8.3 L 32.9 8.2 L 31.6 8.2 L 30.6 8.2 L 29.6 8.3 L 28.7 8.5 L 27.7 8.8 L 26.6 9.1 L 25.2 9.7 L 24.0 10.0 L 22.7 10.5 L 21.6 10.9 L 20.9 11.2 L 20.0 11.6 L 19.2 11.8 L 18.8 12.1 L 18.1 12.6 L 17.5 12.9 L 17.0 13.4 L 16.4 13.8 L 15.8 14.5 L 15.4 15.1 L 14.8 15.9 L 14.1 16.5 L 13.7 17.2 L 13.1 18.0 L 12.7 18.8 L 12.3 19.6 L 12.0 20.5 L 11.4 21.6 L 11.0 22.7 L 10.6 23.9 L 10.2 25.5 L 10.1 27.6 L 9.8 29.8 L 9.7 31.9 L 9.6 34.1 L 9.6 36.1 L 9.6 38.1 L 9.7 40.1 L 10.1 42.2 L 10.6 44.0 L 11.0 45.2 L 11.2 46.0 L 11.3 46.4 L 11.6 47.0 L 12.2 48.3 L 12.9 49.5 L 13.5 50.3 L 13.8 50.6 Z" fill="#ffffff" stroke="#0f172a" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round"></path>
+                <path d="M 12.4 51.5 L 12.5 51.5 L 12.6 51.5 L 12.8 51.2 L 13.5 50.5 L 14.4 49.9 L 15.2 49.3 L 16.1 48.5 L 16.8 47.9 L 17.5 47.1 L 18.3 46.4 L 19.3 45.5 L 20.4 44.8 L 21.5 44.1 L 22.6 43.5 L 23.7 43.2 L 24.8 42.7 L 25.8 42.4 L 27.1 42.2 L 28.4 42.0 L 29.6 42.0 L 30.7 42.0 L 31.7 42.1 L 32.8 42.2 L 33.9 42.4 L 35.2 42.7 L 36.5 43.1 L 37.6 43.4 L 38.5 43.8 L 39.2 44.1 L 39.8 44.5 L 40.2 45.0 L 40.9 45.4 L 41.5 46.2 L 42.1 46.9 L 42.8 47.7 L 43.3 48.3 L 43.5 48.6 L 43.8 48.9 L 44.1 49.4 L 44.4 50.0 L 44.6 50.6 L 44.9 51.2 L 45.1 51.6 L 45.2 51.9 L 45.4 52.1 L 45.5 52.3 L 45.5 52.7 L 45.5 53.1 L 45.5 53.6 L 45.5 54.0 L 45.5 54.4 L 45.5 54.6 L 45.5 54.7 L 45.5 54.6 L 45.5 54.3 L 45.6 53.8 L 46.0 53.1 L 46.4 52.1 L 47.0 51.2 L 47.6 49.9 L 48.1 48.9 L 48.5 48.3 L 49.0 47.2 L 49.5 46.3 L 49.8 45.1 L 50.0 43.9 L 50.5 42.8 L 50.8 41.8 L 51.2 40.4 L 51.4 39.0 L 51.6 37.4 L 52.1 35.6 L 52.2 34.0 L 52.2 32.8 L 52.2 31.2 L 52.2 29.5 L 52.1 27.9 L 51.5 26.0 L 50.9 24.0 L 50.5 22.6 L 49.9 21.3 L 49.2 19.8 L 48.7 18.6 L 47.8 17.3 L 46.8 16.3 L 45.8 15.2 L 44.8 14.1 L 43.7 13.1 L 42.5 12.1 L 41.2 11.3 L 40.0 10.6 L 39.0 10.0 L 37.7 9.4 L 36.7 8.9 L 35.8 8.5 L 34.8 8.4 L 33.9 8.3 L 32.9 8.2 L 31.6 8.2 L 30.6 8.2 L 29.6 8.3 L 28.7 8.5 L 27.7 8.8 L 26.6 9.1 L 25.2 9.7 L 24.0 10.0 L 22.7 10.5 L 21.6 10.9 L 20.9 11.2 L 20.0 11.6 L 19.2 11.8 L 18.8 12.1 L 18.1 12.6 L 17.5 12.9 L 17.0 13.4 L 16.4 13.8 L 15.8 14.5 L 15.4 15.1 L 14.8 15.9 L 14.1 16.5 L 13.7 17.2 L 13.1 18.0 L 12.7 18.8 L 12.3 19.6 L 12.0 20.5 L 11.4 21.6 L 11.0 22.7 L 10.6 23.9 L 10.2 25.5 L 10.1 27.6 L 9.8 29.8 L 9.7 31.9 L 9.6 34.1 L 9.6 36.1 L 9.6 38.1 L 9.7 40.1 L 10.1 42.2 L 10.6 44.0 L 11.0 45.2 L 11.2 46.0 L 11.3 46.4 L 11.6 47.0 L 12.2 48.3 L 12.9 49.5 L 13.5 50.3 L 13.8 50.6 Z" fill="#ffffff" stroke="#0f172a" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round"></path>
             </svg>`;
+
+        function toggleSquareFlags(enabled) {
+            showSquareFlags = enabled;
+            localStorage.setItem('cb_show_square_flags', JSON.stringify(showSquareFlags));
+            if (showSquareFlags) {
+                document.body.classList.add('square-flags-mode');
+            } else {
+                document.body.classList.remove('square-flags-mode');
+            }
+            if (currentCountry) {
+                if (currentCountry.code === 'pl' && !showSquareFlags) {
+                    ballFlag.style.transform = 'rotate(180deg)';
+                } else {
+                    ballFlag.style.transform = 'rotate(0deg)';
+                }
+            }
+        }
 
         function setNormalEyes() {
             ballEyesContainer.innerHTML = svgEyesNormal;
@@ -920,7 +991,19 @@
             menuContainer.classList.add('pop');
 
             menuFlag.style.backgroundImage = `url('https://flagcdn.com/w640/${randomCountry.code}.png')`;
-            if (randomCountry.code === 'pl') {
+            
+            const menuImg = new Image();
+            menuImg.src = `https://flagcdn.com/w640/${randomCountry.code}.png`;
+            menuImg.onload = () => {
+                if (showSquareFlags) {
+                    const ratio = menuImg.naturalWidth / menuImg.naturalHeight;
+                    menuContainer.style.aspectRatio = ratio;
+                } else {
+                    menuContainer.style.aspectRatio = '1 / 1';
+                }
+            };
+
+            if (randomCountry.code === 'pl' && !showSquareFlags) {
                 menuFlag.style.transform = 'rotate(180deg)';
             } else {
                 menuFlag.style.transform = 'rotate(0deg)';
@@ -955,6 +1038,8 @@
         }
 
         function init() {
+            squareFlagsToggle.checked = showSquareFlags;
+            toggleSquareFlags(showSquareFlags);
             preloadFlags();
             startMenuBallAnimation();
         }
@@ -1038,7 +1123,7 @@
             cardElement.onclick = null;
         }
 
-function openGallery() {
+        function openGallery() {
             const grid = document.getElementById('gallery-grid');
             grid.innerHTML = '';
             
@@ -1058,9 +1143,9 @@ function openGallery() {
                 }
 
                 if (isUnlocked) {
-                    const rotation = c.code === 'pl' ? 'transform: rotate(180deg);' : '';
+                    const rotation = (c.code === 'pl' && !showSquareFlags) ? 'transform: rotate(180deg);' : '';
                     card.innerHTML = `
-                        <div class="cb-ball-gallery flex items-center justify-center my-auto">
+                        <div class="cb-ball-gallery gallery-item-${c.code} flex items-center justify-center my-auto">
                             <div class="ball-flag-bg" style="background-image: url('https://flagcdn.com/w160/${c.code}.png'); ${rotation}"></div>
                             <div class="absolute inset-0 flex items-center justify-center gap-1 z-10 pt-0.5">
                                 <div class="cb-eye-mini"></div>
@@ -1072,6 +1157,16 @@ function openGallery() {
                             <div class="text-[11px] text-slate-400 mt-0.5">Угадан: <span class="text-emerald-400 font-bold">${count}</span></div>
                         </div>
                     `;
+                    
+                    if (showSquareFlags) {
+                        const tempImg = new Image();
+                        tempImg.src = `https://flagcdn.com/w160/${c.code}.png`;
+                        tempImg.onload = () => {
+                            const ratio = tempImg.naturalWidth / tempImg.naturalHeight;
+                            const galleryEl = card.querySelector('.cb-ball-gallery');
+                            if (galleryEl) galleryEl.style.aspectRatio = ratio;
+                        };
+                    }
                 } else {
                     card.innerHTML = `
                         <div class="cb-ball-gallery flex items-center justify-center my-auto bg-slate-800/80 border-2 border-slate-700">
@@ -1113,8 +1208,9 @@ function openGallery() {
         function openCurrentFlagModal() {
             if (!currentCountry) return;
             modalFlagTitle.textContent = `Оригинальный флаг`;
-            const rotation = currentCountry.code === 'pl' ? 'transform: rotate(180deg);' : '';
+            const rotation = (currentCountry.code === 'pl' && !showSquareFlags) ? 'transform: rotate(180deg);' : '';
             modalFlagImg.style.backgroundImage = `url('https://flagcdn.com/w640/${currentCountry.code}.png')`;
+            modalFlagImg.style.transform = rotation;
             flagModal.classList.remove('hidden');
             flagModal.classList.add('flex');
         }
@@ -1201,7 +1297,7 @@ function openGallery() {
             flagLoader.classList.remove('hidden');
             ballFlag.style.backgroundImage = 'none';
 
-            if (currentCountry.code === 'pl') {
+            if (currentCountry.code === 'pl' && !showSquareFlags) {
                 ballFlag.style.transform = 'rotate(180deg)';
             } else {
                 ballFlag.style.transform = 'rotate(0deg)';
@@ -1212,6 +1308,13 @@ function openGallery() {
             img.onload = () => {
                 flagLoader.classList.add('hidden');
                 ballFlag.style.backgroundImage = `url('${img.src}')`;
+                
+                if (showSquareFlags) {
+                    const ratio = img.naturalWidth / img.naturalHeight;
+                    cbContainer.style.aspectRatio = ratio;
+                } else {
+                    cbContainer.style.aspectRatio = '1 / 1';
+                }
             };
 
             speechBubble.textContent = speechPhrases[Math.floor(Math.random() * speechPhrases.length)];
