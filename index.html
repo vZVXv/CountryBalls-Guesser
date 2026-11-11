@@ -117,7 +117,7 @@
             transition: border-radius 0.2s ease, width 0.3s ease, height 0.3s ease;
         }
 
-body.square-flags-mode .cb-ball-main {
+        body.square-flags-mode .cb-ball-main {
             width: 100% !important;
             max-width: 480px !important;
             height: auto !important;
@@ -139,13 +139,12 @@ body.square-flags-mode .cb-ball-main {
 
         body.square-flags-mode .cb-ball-gallery {
             width: 100% !important;
-            height: 75px !important; /* Устанавливаем стабильную высоту для прямоугольника */
+            height: 75px !important;
             border-radius: 10px !important;
             transform: none !important;
             box-shadow: 3px 4px 0px #0f172a !important;
         }
 
-        /* Корректировка отображения самого фона флага в галерее для прямоугольного режима */
         body.square-flags-mode .cb-ball-gallery .ball-flag-bg {
             width: 100% !important;
             height: 100% !important;
@@ -349,6 +348,19 @@ body.square-flags-mode .cb-ball-main {
                     </label>
                     <input type="checkbox" id="square-flags-toggle" onchange="toggleSquareFlags(this.checked)" class="w-5 h-5 accent-sky-500 rounded cursor-pointer">
                 </div>
+
+                <!-- Кнопка сброса скачанных флагов -->
+                <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-semibold text-slate-300 flex items-center gap-2.5">
+                            <i class="fas fa-sync-alt text-amber-400 text-base"></i> Сброс кэша флагов
+                        </div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">Перезагрузить все флаги заново</div>
+                    </div>
+                    <button onclick="resetDownloadedFlags()" class="py-2 px-3.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition text-xs flex items-center gap-1.5 cursor-pointer">
+                        <i class="fas fa-trash-alt"></i> Сбросить
+                    </button>
+                </div>
             </div>
 
             <div class="pt-6 mt-4 border-t border-slate-800">
@@ -499,7 +511,7 @@ body.square-flags-mode .cb-ball-main {
         <div class="flex items-center space-x-3">
             <span class="text-3xl">🌍</span>
             <h1 class="text-2xl font-black tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-indigo-400 comic-font">
-                CountryBalls Guesser v0.8.5 (BETA)
+                CountryBalls Guesser v0.8.6 (BETA)
             </h1>
         </div>
 
@@ -601,7 +613,7 @@ body.square-flags-mode .cb-ball-main {
 
     <footer class="w-full max-w-6xl mx-auto p-4 flex justify-between items-center text-slate-500 text-xs">
         <span>CountryBalls Guesser</span>
-        <span class="font-mono text-slate-400">v0.8.5 (BETA)</span>
+        <span class="font-mono text-slate-400">v0.8.6 (BETA)</span>
     </footer>
 
     <script>
@@ -728,8 +740,33 @@ body.square-flags-mode .cb-ball-main {
             ]
         };
 
+        // Кэш версии флагов для принудительного обновления при критичном баге
+        let flagCacheVersion = parseInt(localStorage.getItem('cb_flag_version') || '1');
+
+        function resetDownloadedFlags() {
+            loadedImagesCache = {};
+            flagCacheVersion++;
+            localStorage.setItem('cb_flag_version', flagCacheVersion);
+            alert('Кэш флагов успешно сброшен! Все флаги будут скачаны заново.');
+            
+            if (currentCountry) {
+                const flagUrl = currentCountry.url;
+                flagLoader.classList.remove('hidden');
+                ballFlag.style.backgroundImage = 'none';
+                getCachedImage(flagUrl, (img) => {
+                    flagLoader.classList.add('hidden');
+                    ballFlag.style.backgroundImage = `url('${flagUrl}')`;
+                    updateContainerAspectRatio(cbContainer, img);
+                });
+            }
+            updateMenuBall();
+            if (!galleryScreen.classList.contains('hidden')) {
+                renderGalleryGrid();
+            }
+        }
+
         // Глобальный кэш загруженных изображений для предотвращения повторных скачиваний
-        const loadedImagesCache = {};
+        let loadedImagesCache = {};
 
         function getCachedImage(url, callback) {
             if (loadedImagesCache[url]) {
@@ -953,7 +990,8 @@ body.square-flags-mode .cb-ball-main {
             name: c.name, 
             code: c.code, 
             tier: c.tier || 1, 
-            url: `https://raw.githubusercontent.com/vZVXv/CountryBalls-Guesser/main/FLAGS/WORLD/${c.code}.png` 
+            baseUrl: `https://raw.githubusercontent.com/vZVXv/CountryBalls-Guesser/main/FLAGS/WORLD/${c.code}.png`,
+            get url() { return `${this.baseUrl}?v=${flagCacheVersion}`; }
         }));
 
         // База регионов России (прямые ссылки на raw.githubusercontent.com)
@@ -1051,7 +1089,8 @@ body.square-flags-mode .cb-ball-main {
             id: 'ru_' + idx, 
             name: r.name, 
             code: r.code,
-            url: `https://raw.githubusercontent.com/vZVXv/CountryBalls-Guesser/main/FLAGS/RU/${r.code}.png` 
+            baseUrl: `https://raw.githubusercontent.com/vZVXv/CountryBalls-Guesser/main/FLAGS/RU/${r.code}.png`,
+            get url() { return `${this.baseUrl}?v=${flagCacheVersion}`; }
         }));
 
         let score = 0;
